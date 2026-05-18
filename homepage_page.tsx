@@ -220,7 +220,7 @@ export default async function HomePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {featuredEngineers.map((engineer) => (
-              <EngineerCard key={engineer.id} engineer={engineer} />
+              <EngineerCard key={engineer.slug} engineer={engineer} />
             ))}
           </div>
         </div>
