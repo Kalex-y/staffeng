@@ -5,7 +5,7 @@ import type { Profile, WorkPreferences, Experience, Education, Skill, Achievemen
 import { AVAILABILITY_LABELS, WORK_LOCATION_LABELS, EMPLOYMENT_TYPE_LABELS, CONTRACT_TYPE_LABELS } from "@/lib/types";
 
 export default async function PublicProfilePage({ params }: { params: { username: string } }) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
 
   const { data: profile } = await supabase
     .from("profiles")
