@@ -5,7 +5,7 @@ import type { Profile, WorkPreferences, Experience, Skill } from "@/lib/types";
 import { AVAILABILITY_LABELS, WORK_LOCATION_LABELS } from "@/lib/types";
 
 export default async function DashboardPage() {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 
