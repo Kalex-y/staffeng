@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/dashboard";
@@ -45,9 +45,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex" style={{ fontFamily: "var(--font-jakarta)" }}>
-      {/* ── Left panel ── */}
+      {/* Left panel */}
       <div className="hidden lg:flex lg:w-[44%] bg-[#1B2D4F] flex-col justify-between p-12 relative overflow-hidden">
-        {/* Background texture */}
         <div
           className="absolute inset-0 opacity-5"
           style={{
@@ -66,26 +65,21 @@ export default function LoginPage() {
         </div>
 
         <div className="relative">
-          <h2
-            className="text-4xl font-bold text-white leading-tight mb-4"
-            style={{ fontFamily: "var(--font-fraunces)" }}
-          >
+          <h2 className="text-4xl font-bold text-white leading-tight mb-4" style={{ fontFamily: "var(--font-fraunces)" }}>
             The platform built for engineering leaders.
           </h2>
           <p className="text-white/60 text-[15px] leading-relaxed mb-10">
             Create your profile, set your preferences, and let the right opportunities find you — on your terms.
           </p>
-
-          {/* Trust signals */}
           <div className="space-y-4">
             {[
-              { icon: "✦", text: "Vetted by engineers, for engineers" },
-              { icon: "✦", text: "Your data is yours — always" },
-              { icon: "✦", text: "No spam. No recruiter cold calls." },
-            ].map((item) => (
-              <div key={item.text} className="flex items-center gap-3">
-                <span className="text-blue-400 text-xs">{item.icon}</span>
-                <span className="text-white/70 text-sm">{item.text}</span>
+              "Vetted by engineers, for engineers",
+              "Your data is yours — always",
+              "No spam. No recruiter cold calls.",
+            ].map((text) => (
+              <div key={text} className="flex items-center gap-3">
+                <span className="text-blue-400 text-xs">✦</span>
+                <span className="text-white/70 text-sm">{text}</span>
               </div>
             ))}
           </div>
@@ -96,10 +90,9 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* ── Right panel ── */}
+      {/* Right panel */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-[#F7F6F3]">
         <div className="w-full max-w-[400px]">
-          {/* Mobile logo */}
           <Link href="/" className="flex items-center gap-2 mb-10 lg:hidden">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1B2D4F] text-white text-sm font-bold">SE</span>
             <span className="text-[#1B2D4F] font-semibold">staffeng.co</span>
@@ -110,7 +103,6 @@ export default function LoginPage() {
             <p className="text-slate-500 text-sm">Sign in to your StaffEng account.</p>
           </div>
 
-          {/* Google button */}
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
@@ -132,7 +124,6 @@ export default function LoginPage() {
             <div className="flex-1 h-px bg-slate-200" />
           </div>
 
-          {/* Email form */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="email">
@@ -201,5 +192,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F7F6F3]" />}>
+      <LoginForm />
+    </Suspense>
   );
 }
