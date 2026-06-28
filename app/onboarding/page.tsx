@@ -190,7 +190,7 @@ export default function OnboardingPage() {
           .from("resumes")
           .upload(`${user.id}/resume.${ext}`, resumeFile, { upsert: true });
         if (data) {
-          const { data: urlData } = supabase.storage.from("resumes").createSignedUrl(data.path, 60 * 60 * 24 * 365);
+          const { data: urlData } = await supabase.storage.from("resumes").createSignedUrl(data.path, 60 * 60 * 24 * 365);
           resumeUrl = urlData?.signedUrl ?? null;
           resumeFilename = resumeFile.name;
         }
