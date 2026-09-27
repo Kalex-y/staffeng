@@ -70,6 +70,7 @@ export default function Navbar() {
               <Link href="/auth/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
                 Sign in
               </Link>
+              <Link href="/inbox" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Inbox</Link>
               <Link href="/auth/signup" className="inline-flex items-center gap-1.5 bg-[#1B2D4F] hover:bg-[#142240] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
                 Join free
               </Link>
