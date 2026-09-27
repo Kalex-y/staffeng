@@ -103,3 +103,16 @@ export const CONTRACT_TYPE_LABELS: Record<string, string> = {
   contract: "Contract",
   freelance: "Freelance",
 };
+
+export type Company = {
+  id: string;
+  owner_id: string;
+  name: string;
+  slug: string | null;
+  logo_url: string | null;
+  website_url: string | null;
+  description: string | null;
+  industry: string | null;
+  company_size: string | null;
+  location: string | null;
+};
