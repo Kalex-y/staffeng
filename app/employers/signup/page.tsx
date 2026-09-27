@@ -20,7 +20,7 @@ export default function EmployerSignupPage() {
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: { full_name: fullName, intended_role: "employer" },
         emailRedirectTo: `${window.location.origin}/auth/callback?next=/employers/onboarding`,
       },
     });
