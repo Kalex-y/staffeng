@@ -223,6 +223,7 @@ export default async function DashboardPage() {
                 { href: "/onboarding", icon: "✏️", label: "Edit profile" },
                 { href: `/profile/${profile.username}`, icon: "👁️", label: "Preview profile" },
                 { href: "/jobs", icon: "💼", label: "Browse jobs" },
+                { href: "/inbox", icon: "✉️", label: "Inbox" },
               ].map(action => (
                 <Link
                   key={action.href}
