@@ -36,10 +36,7 @@ function LoginForm() {
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback?next=${redirect}` },
     });
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    }
+    if (error) { setError(error.message); setLoading(false); }
   };
 
   return (
@@ -103,7 +100,7 @@ function LoginForm() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-semibold text-slate-700" htmlFor="password">Password</label>
-                <Link href="/auth/reset-password" className="text-xs text-blue-600 hover:text-blue-800 transition-colors">Forgot password?</Link>
+                <Link href="/auth/forgot-password" className="text-xs text-blue-600 hover:text-blue-800 transition-colors">Forgot password?</Link>
               </div>
               <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full border border-slate-200 bg-white rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
             </div>
