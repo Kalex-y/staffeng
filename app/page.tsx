@@ -3,27 +3,27 @@ import { getFeaturedEngineers } from "@/lib/data";
 import EngineerCard from "@/components/EngineerCard";
 
 const stats = [
-  { label: "Engineers vetted", value: "200+" },
-  { label: "Companies served", value: "60+" },
-  { label: "Avg. time to match", value: "3 days" },
-  { label: "Engineer satisfaction", value: "4.9/5" },
+  { label: "Seniority focus", value: "Staff+" },
+  { label: "Work options", value: "Remote-first" },
+  { label: "No agency markups", value: "0 fees" },
+  { label: "You talk to engineers", value: "Direct" },
 ];
 
 const howItWorks = [
   {
     step: "01",
-    title: "Tell us what you need",
-    body: "Share the scope, skills, and timeline. We'll match you with engineers who've done it before.",
+    title: "Create your account",
+    body: "Sign up as a company in minutes — it's free. Tell us the skills and seniority you're after.",
   },
   {
     step: "02",
-    title: "Meet vetted candidates",
-    body: "No recruiter call required. Browse profiles and intro calls are typically within 48 hours.",
+    title: "Browse engineers",
+    body: "Filter by skills, seniority, and availability. Profiles are written by the engineers themselves.",
   },
   {
     step: "03",
-    title: "Start immediately",
-    body: "Engage on a contract or full-time basis. Most engineers are available within days, not months.",
+    title: "Reach out directly",
+    body: "Message an engineer or post a role. No recruiter call, no middlemen — you connect directly.",
   },
 ];
 
@@ -31,12 +31,12 @@ const whyUs = [
   {
     icon: "✦",
     title: "Agentic-native engineers",
-    body: "Every engineer has shipped production AI and agentic systems — not just LLM wrappers, but reliable pipelines at scale.",
+    body: "Engineers focused on AI and agentic systems — from LLM applications to reliable production pipelines.",
   },
   {
     icon: "✦",
     title: "Staff-level, not mid-level",
-    body: "These engineers define architecture, make cross-team decisions, and raise the ceiling of what your org can build.",
+    body: "Built for engineers who define architecture, make cross-team decisions, and raise the ceiling of what your org can build.",
   },
   {
     icon: "✦",
@@ -45,8 +45,8 @@ const whyUs = [
   },
   {
     icon: "✦",
-    title: "Vetted by practitioners",
-    body: "Every profile is reviewed by other staff engineers, not HR. We check systems thinking, not just résumé keywords.",
+    title: "Built by engineers, for engineers",
+    body: "Profiles are written in real technical terms — systems thinking and trade-offs, not résumé keywords.",
   },
 ];
 
@@ -67,7 +67,7 @@ export default function HomePage() {
             <span className="text-indigo-600">with AI</span>
           </h1>
           <p className="mt-6 text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-            Hire vetted staff engineers to lead agentic engineering and ship
+            Hire senior staff engineers to lead agentic engineering and ship
             product & platform features. No recruiters. No agencies. Just
             engineers who&apos;ve done it.
           </p>
@@ -169,7 +169,7 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-gray-900">How it works</h2>
-            <p className="text-gray-500 mt-3">From request to kickoff in under a week.</p>
+            <p className="text-gray-500 mt-3">From sign-up to first message in one sitting.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((step) => (
@@ -190,7 +190,7 @@ export default function HomePage() {
             Ready to find your next staff engineer?
           </h2>
           <p className="text-indigo-200 mt-4 text-lg">
-            Browse our roster or tell us what you need and we&apos;ll match you within 24 hours.
+            Browse engineers or post a role — reach out directly, no recruiters.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -200,10 +200,10 @@ export default function HomePage() {
               Browse engineers →
             </Link>
             <Link
-              href="mailto:hello@staffeng.co"
+              href="/join"
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl border border-indigo-400 text-white font-medium hover:bg-indigo-700 transition-colors"
             >
-              Get matched
+              Get started
             </Link>
           </div>
         </div>
