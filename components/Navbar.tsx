@@ -72,7 +72,7 @@ export default function Navbar() {
               <Link href="/auth/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
                 Sign in
               </Link>
-              <Link href="/auth/signup" className="inline-flex items-center gap-1.5 bg-[#1B2D4F] hover:bg-[#142240] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+              <Link href="/join" className="inline-flex items-center gap-1.5 bg-[#1B2D4F] hover:bg-[#142240] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
                 Join free
               </Link>
             </>
@@ -104,7 +104,7 @@ export default function Navbar() {
             ) : (
               <>
                 <Link href="/auth/login" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-600 py-1">Sign in</Link>
-                <Link href="/auth/signup" onClick={() => setMobileOpen(false)} className="inline-flex items-center justify-center bg-[#1B2D4F] text-white text-sm font-semibold px-4 py-2.5 rounded-lg">Join free</Link>
+                <Link href="/join" onClick={() => setMobileOpen(false)} className="inline-flex items-center justify-center bg-[#1B2D4F] text-white text-sm font-semibold px-4 py-2.5 rounded-lg">Join free</Link>
               </>
             )}
           </div>
