@@ -100,38 +100,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured engineers */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900">Available now</h2>
-              <p className="text-gray-500 mt-2">
-                A sample of engineers open to new engagements.
-              </p>
+      {/* Featured engineers — only shown when there are real engineers to feature */}
+      {featured.length > 0 && (
+        <section className="py-20 px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Available now</h2>
+                <p className="text-gray-500 mt-2">
+                  A sample of engineers open to new engagements.
+                </p>
+              </div>
+              <Link
+                href="/engineers"
+                className="hidden sm:inline text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              >
+                View all engineers →
+              </Link>
             </div>
-            <Link
-              href="/engineers"
-              className="hidden sm:inline text-sm font-medium text-indigo-600 hover:text-indigo-700"
-            >
-              View all engineers →
-            </Link>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {featured.map((eng) => (
+                <EngineerCard key={eng.slug} engineer={eng} />
+              ))}
+            </div>
+            <div className="mt-8 text-center sm:hidden">
+              <Link
+                href="/engineers"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              >
+                View all engineers →
+              </Link>
+            </div>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {featured.map((eng) => (
-              <EngineerCard key={eng.slug} engineer={eng} />
-            ))}
-          </div>
-          <div className="mt-8 text-center sm:hidden">
-            <Link
-              href="/engineers"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
-            >
-              View all engineers →
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Why staffeng.co */}
       <section id="for-companies" className="py-20 px-6 bg-gray-50">
