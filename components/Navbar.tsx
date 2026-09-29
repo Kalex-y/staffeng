@@ -59,6 +59,7 @@ export default function Navbar() {
           {user ? (
             <>
               <Link href="/inbox" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Inbox</Link>
+              <Link href="/settings" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Settings</Link>
               <button onClick={handleSignOut} className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
                 Sign out
               </button>
@@ -96,6 +97,8 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">Dashboard</Link>
+                <Link href="/inbox" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">Inbox</Link>
+                <Link href="/settings" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">Settings</Link>
                 <button onClick={handleSignOut} className="text-left text-sm font-medium text-slate-500 py-1">Sign out</button>
               </>
             ) : (
