@@ -26,6 +26,9 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      if (next.includes("reset-password")) {
+        return NextResponse.redirect(`${origin}/auth/reset-password`);
+      }
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const wantsEmployer = next.includes("/employers");
