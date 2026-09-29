@@ -60,8 +60,8 @@ export default function EmployerSignupPage() {
           <span className="text-white font-semibold text-lg">staff<span className="text-blue-400">eng</span><span className="text-white/30">.co</span></span>
         </Link>
         <div className="relative">
-          <h2 className="text-4xl font-bold text-white leading-tight mb-4" style={{ fontFamily: "var(--font-fraunces)" }}>Hire vetted Staff & Principal Engineers.</h2>
-          <p className="text-white/60 text-[15px] leading-relaxed">Post roles, search vetted engineers, and reach out directly. No recruiters, no placement fees.</p>
+          <h2 className="text-4xl font-bold text-white leading-tight mb-4" style={{ fontFamily: "var(--font-fraunces)" }}>Hire experienced Staff & Principal Engineers.</h2>
+          <p className="text-white/60 text-[15px] leading-relaxed">Post roles, search senior engineers, and reach out directly. No recruiters, no placement fees.</p>
         </div>
         <p className="relative text-white/25 text-xs">© {new Date().getFullYear()} StaffEng. All rights reserved.</p>
       </div>
