@@ -18,6 +18,13 @@ export default async function EmployerDashboardPage() {
 
   const initials = company.name.slice(0, 2).toUpperCase();
 
+  const actions = [
+    { href: "/employers/engineers", icon: "🔍", title: "Find engineers", desc: "Search vetted profiles and reach out directly." },
+    { href: "/employers/jobs/new", icon: "📝", title: "Post a role", desc: "Publish a Staff or Principal opening." },
+    { href: "/employers/jobs", icon: "📋", title: "Your roles", desc: "Manage posts and review applicants." },
+    { href: "/employers/messages", icon: "✉️", title: "Messages", desc: "Your outreach and conversations." },
+  ];
+
   return (
     <div className="min-h-screen bg-[#F7F6F3]" style={{ fontFamily: "var(--font-jakarta)" }}>
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
@@ -27,6 +34,7 @@ export default async function EmployerDashboardPage() {
             <span className="text-[#1B2D4F] font-semibold text-lg hidden sm:block">staff<span className="text-[#2563EB]">eng</span><span className="text-slate-300">.co</span></span>
           </Link>
           <div className="flex items-center gap-4">
+            <Link href="/employers/messages" className="text-sm font-medium text-slate-500 hover:text-slate-900 hidden sm:block">Messages</Link>
             <Link href="/employers/engineers" className="text-sm font-medium text-slate-500 hover:text-slate-900 hidden sm:block">Find engineers</Link>
             <Link href="/employers/jobs/new" className="text-sm font-semibold bg-[#1B2D4F] text-white px-4 py-2 rounded-lg hover:bg-[#142240] transition-colors">Post a role</Link>
           </div>
@@ -47,22 +55,14 @@ export default async function EmployerDashboardPage() {
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-4">
-          <Link href="/employers/engineers" className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-slate-300 transition-all" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
-            <span className="text-2xl">🔍</span>
-            <p className="font-semibold text-slate-900 mt-2">Find engineers</p>
-            <p className="text-slate-500 text-sm mt-1">Search vetted profiles and reach out directly.</p>
-          </Link>
-          <Link href="/employers/jobs/new" className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-slate-300 transition-all" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
-            <span className="text-2xl">📝</span>
-            <p className="font-semibold text-slate-900 mt-2">Post a role</p>
-            <p className="text-slate-500 text-sm mt-1">Publish a Staff or Principal opening.</p>
-          </Link>
-          <Link href="/employers/jobs" className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-slate-300 transition-all" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
-            <span className="text-2xl">📋</span>
-            <p className="font-semibold text-slate-900 mt-2">Your roles</p>
-            <p className="text-slate-500 text-sm mt-1">Manage posts and review applicants.</p>
-          </Link>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {actions.map((a) => (
+            <Link key={a.href} href={a.href} className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-slate-300 transition-all" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
+              <span className="text-2xl">{a.icon}</span>
+              <p className="font-semibold text-slate-900 mt-2">{a.title}</p>
+              <p className="text-slate-500 text-sm mt-1">{a.desc}</p>
+            </Link>
+          ))}
         </div>
       </div>
     </div>
