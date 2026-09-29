@@ -11,6 +11,7 @@ type EngineerProfile = {
   headline: string | null;
   avatar_url: string | null;
   location: string | null;
+  is_open_to_work: boolean | null;
 };
 
 export default function EngineersClient() {
@@ -26,8 +27,8 @@ export default function EngineersClient() {
       // Public, non-employer profiles the engineer has chosen to make visible.
       const { data } = await supabase
         .from("profiles")
-        .select("id, username, full_name, headline, avatar_url, location")
-        .eq("visibility", "public")
+        .select("id, username, full_name, headline, avatar_url, location, is_open_to_work")
+        .eq("profile_visibility", "public")
         .neq("account_type", "employer")
         .order("created_at", { ascending: false });
 
@@ -135,6 +136,12 @@ export default function EngineersClient() {
                       )}
                     </div>
                   </div>
+                  {eng.is_open_to_work && (
+                    <span className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-2.5 py-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      Open to work
+                    </span>
+                  )}
                   {eng.headline && (
                     <p className="text-sm text-gray-600 mt-4 line-clamp-3">
                       {eng.headline}
