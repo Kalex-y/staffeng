@@ -1,55 +1,195 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase";
 
-export default async function EmployerJobsPage() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login");
+type JobRow = {
+  id: string;
+  title: string | null;
+  level: string | null;
+  employment_type: string | null;
+  work_location: string | null;
+  location: string | null;
+  status: string | null;
+  created_at: string;
+  applicantCount: number;
+};
 
-  const { data: company } = await supabase.from("companies").select("id, name").eq("owner_id", user.id).maybeSingle();
-  if (!company) redirect("/employers/onboarding");
+export default function EmployerJobsPage() {
+  const supabase = createClient();
+  const router = useRouter();
 
-  const { data: jobs } = await supabase
-    .from("job_posts")
-    .select("id, title, level, status, work_location, location, created_at, applications(count)")
-    .eq("company_id", company.id)
-    .order("created_at", { ascending: false });
+  const [loading, setLoading] = useState(true);
+  const [rows, setRows] = useState<JobRow[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const list = jobs ?? [];
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+
+    const { data: jobs, error: jobErr } = await supabase
+      .from("job_posts")
+      .select(
+        "id, title, level, employment_type, work_location, location, status, created_at"
+      )
+      .eq("posted_by", user.id)
+      .order("created_at", { ascending: false });
+
+    if (jobErr) {
+      setError(jobErr.message);
+      setLoading(false);
+      return;
+    }
+
+    const list = jobs ?? [];
+    const jobIds = list.map((j) => j.id);
+
+    // Applicant counts per job
+    let counts: Record<string, number> = {};
+    if (jobIds.length > 0) {
+      const { data: apps } = await supabase
+        .from("applications")
+        .select("id, job_id")
+        .in("job_id", jobIds);
+
+      counts = (apps ?? []).reduce((acc: Record<string, number>, a) => {
+        acc[a.job_id] = (acc[a.job_id] ?? 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    setRows(
+      list.map((j) => ({
+        ...j,
+        applicantCount: counts[j.id] ?? 0,
+      }))
+    );
+    setLoading(false);
+  }, [supabase, router]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <p className="text-slate-500">Loading your roles…</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3]" style={{ fontFamily: "var(--font-jakarta)" }}>
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/employers/dashboard" className="text-slate-400 text-sm">← Dashboard</Link>
-          <Link href="/employers/jobs/new" className="text-sm font-semibold bg-[#1B2D4F] text-white px-4 py-2 rounded-lg hover:bg-[#142240]">Post a role</Link>
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-4xl mx-auto px-4 py-10">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">
+              Your roles
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">
+              Roles you&apos;ve posted and who has applied.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/employers/dashboard"
+              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            >
+              ← Dashboard
+            </Link>
+            <Link
+              href="/employers/jobs/new"
+              className="rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+            >
+              Post a role
+            </Link>
+          </div>
         </div>
-      </header>
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <h1 className="text-3xl font-bold text-[#0F172A] mb-6" style={{ fontFamily: "var(--font-fraunces)" }}>Your roles</h1>
-        {list.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
-            <p className="font-semibold text-slate-900">No roles yet</p>
-            <p className="text-slate-500 text-sm mt-1 mb-4">Post your first Staff or Principal opening.</p>
-            <Link href="/employers/jobs/new" className="inline-block bg-[#1B2D4F] text-white text-sm font-semibold px-5 py-2.5 rounded-xl">Post a role</Link>
+
+        {error && (
+          <div className="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        {rows.length === 0 ? (
+          <div className="rounded-xl bg-white border border-slate-200 p-10 text-center">
+            <p className="text-slate-600 font-medium">
+              You haven&apos;t posted any roles yet.
+            </p>
+            <Link
+              href="/employers/jobs/new"
+              className="inline-block mt-5 rounded-lg bg-indigo-600 text-white px-5 py-2.5 text-sm font-medium hover:bg-indigo-700"
+            >
+              Post your first role
+            </Link>
           </div>
         ) : (
-          <div className="space-y-3">
-            {list.map((job) => {
-              const applicants = Array.isArray(job.applications) ? (job.applications[0]?.count ?? 0) : 0;
+          <div className="space-y-4">
+            {rows.map((job) => {
+              const place =
+                job.work_location || job.location || "Location n/a";
               return (
-                <div key={job.id} className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center justify-between" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-slate-900">{job.title}</p>
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${job.status === "open" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{job.status}</span>
+                <div
+                  key={job.id}
+                  className="rounded-xl bg-white border border-slate-200 p-6"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-lg font-semibold text-slate-900">
+                          {job.title || "Untitled role"}
+                        </h2>
+                        {job.status && (
+                          <span className="text-[11px] px-2 py-0.5 rounded-full border bg-slate-100 text-slate-500 border-slate-200 capitalize">
+                            {job.status}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-slate-500 mt-1">
+                        {[job.level, job.employment_type, place]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
                     </div>
-                    <p className="text-slate-500 text-sm mt-0.5">{job.level} · {job.work_location}{job.location ? ` · ${job.location}` : ""}</p>
+                    <span className="text-xs text-slate-400 whitespace-nowrap">
+                      {new Date(job.created_at).toLocaleDateString()}
+                    </span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-[#1B2D4F]">{applicants}</p>
-                    <p className="text-xs text-slate-400">applicant{applicants !== 1 ? "s" : ""}</p>
+
+                  <div className="mt-5 flex items-center justify-between">
+                    <span className="text-sm text-slate-600">
+                      <span className="font-semibold text-slate-900">
+                        {job.applicantCount}
+                      </span>{" "}
+                      {job.applicantCount === 1 ? "applicant" : "applicants"}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        href={`/jobs/${job.id}`}
+                        className="text-sm text-slate-500 hover:text-slate-700"
+                      >
+                        View posting
+                      </Link>
+                      <Link
+                        href={`/employers/jobs/${job.id}/applicants`}
+                        className="rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+                      >
+                        View applicants
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
