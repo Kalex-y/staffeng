@@ -108,7 +108,7 @@ export default function SignupPage() {
             {[
               { step: "01", title: "Build your profile", desc: "Add experience, skills, and achievements" },
               { step: "02", title: "Set your preferences", desc: "Remote, hybrid, full-time — you decide" },
-              { step: "03", title: "Get discovered", desc: "Vetted companies reach out directly" },
+              { step: "03", title: "Get discovered", desc: "Hiring companies reach out directly" },
             ].map((item) => (
               <div key={item.step} className="flex items-start gap-4">
                 <span
