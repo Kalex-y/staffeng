@@ -7,13 +7,13 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "staffeng.co — Vetted Staff Engineers for Hire",
+  title: "staffeng.co — Senior Staff Engineers for Hire",
   description:
-    "Find vetted staff engineers to lead agentic engineering and build product & platform features. No recruiters, no agencies.",
+    "Hire senior staff engineers to lead agentic engineering and build product & platform features. No recruiters, no agencies.",
   openGraph: {
-    title: "staffeng.co — Vetted Staff Engineers for Hire",
+    title: "staffeng.co — Senior Staff Engineers for Hire",
     description:
-      "Find vetted staff engineers to lead agentic engineering and build product & platform features.",
+      "Hire senior staff engineers to lead agentic engineering and build product & platform features.",
     url: "https://staffeng.co",
     siteName: "staffeng.co",
   },
