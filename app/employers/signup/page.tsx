@@ -68,9 +68,22 @@ export default function EmployerSignupPage() {
 
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-[#F7F6F3]">
         <div className="w-full max-w-[400px]">
+          <Link href="/" className="flex items-center gap-2 mb-10 lg:hidden">
+            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1B2D4F] text-white text-sm font-bold">SE</span>
+            <span className="text-[#1B2D4F] font-semibold">staffeng.co</span>
+          </Link>
+
           <div className="mb-8">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1B2D4F]/10 text-[#1B2D4F] text-xs font-semibold px-3 py-1 mb-3">
+              🏢 Employer account
+            </span>
             <h1 className="text-2xl font-bold text-slate-900 mb-1">Create a company account</h1>
-            <p className="text-slate-500 text-sm">Start hiring on StaffEng — it&rsquo;s free.</p>
+            <p className="text-slate-500 text-sm">
+              Post roles and hire senior engineers.{" "}
+              <Link href="/auth/signup" className="text-[#2563EB] font-medium hover:underline">
+                Looking for work instead?
+              </Link>
+            </p>
           </div>
 
           <button onClick={handleGoogle} disabled={loading} className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-sm py-3 rounded-xl transition-all mb-6 disabled:opacity-60" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
@@ -97,6 +110,13 @@ export default function EmployerSignupPage() {
             <button type="submit" disabled={loading} className="w-full bg-[#1B2D4F] hover:bg-[#142240] disabled:opacity-60 text-white font-semibold text-sm py-3 rounded-xl transition-colors">
               {loading ? "Creating account…" : "Create company account"}
             </button>
+
+            <p className="text-center text-xs text-slate-400 leading-relaxed">
+              By creating an account you agree to our{" "}
+              <Link href="/terms" className="text-slate-500 hover:text-slate-700">Terms</Link>
+              {" "}and{" "}
+              <Link href="/privacy" className="text-slate-500 hover:text-slate-700">Privacy Policy</Link>.
+            </p>
           </form>
 
           <p className="text-center text-sm text-slate-500 mt-6">Looking for work instead?{" "}<Link href="/auth/signup" className="font-semibold text-[#2563EB] hover:text-blue-800">Join as an engineer</Link></p>
