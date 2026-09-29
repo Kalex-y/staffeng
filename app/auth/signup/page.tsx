@@ -24,7 +24,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: { full_name: fullName, intended_role: "engineer" },
         emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
       },
     });
@@ -140,8 +140,16 @@ export default function SignupPage() {
           </Link>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-900 mb-1">Create your account</h1>
-            <p className="text-slate-500 text-sm">Join StaffEng — it&rsquo;s free.</p>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2563EB]/10 text-[#2563EB] text-xs font-semibold px-3 py-1 mb-3">
+              👩‍💻 Engineer account
+            </span>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">Create your engineer profile</h1>
+            <p className="text-slate-500 text-sm">
+              Get discovered by companies hiring senior engineers.{" "}
+              <Link href="/employers/signup" className="text-[#2563EB] font-medium hover:underline">
+                Hiring instead?
+              </Link>
+            </p>
           </div>
 
           <button
@@ -183,7 +191,7 @@ export default function SignupPage() {
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="email">
-                Work email
+                Email
               </label>
               <input
                 id="email"
@@ -191,7 +199,7 @@ export default function SignupPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
+                placeholder="you@example.com"
                 className="w-full border border-slate-200 bg-white rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
@@ -236,9 +244,9 @@ export default function SignupPage() {
 
             <p className="text-center text-xs text-slate-400 leading-relaxed">
               By creating an account you agree to our{" "}
-              <Link href="#" className="text-slate-500 hover:text-slate-700">Terms</Link>
+              <Link href="/terms" className="text-slate-500 hover:text-slate-700">Terms</Link>
               {" "}and{" "}
-              <Link href="#" className="text-slate-500 hover:text-slate-700">Privacy Policy</Link>.
+              <Link href="/privacy" className="text-slate-500 hover:text-slate-700">Privacy Policy</Link>.
             </p>
           </form>
 
