@@ -102,8 +102,7 @@ export default function SignupPage() {
           <Link href="/" className="inline-flex items-center gap-2">
             <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 text-white text-sm font-bold">SE</span>
             <span className="text-white font-semibold text-lg">
-              staff<span className="text-blue-400">eng</span>
-              <span className="text-white/30">.co</span>
+              Staff<span className="text-blue-400">Eng</span>
             </span>
           </Link>
         </div>
@@ -151,7 +150,7 @@ export default function SignupPage() {
         <div className="w-full max-w-[400px]">
           <Link href="/" className="flex items-center gap-2 mb-10 lg:hidden">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1B2D4F] text-white text-sm font-bold">SE</span>
-            <span className="text-[#1B2D4F] font-semibold">staffeng.co</span>
+            <span className="text-[#1B2D4F] font-semibold">StaffEng</span>
           </Link>
 
           <div className="mb-8">
