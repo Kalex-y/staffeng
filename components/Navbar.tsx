@@ -31,6 +31,14 @@ export default function Navbar() {
   const email = user?.email ?? "";
   const initials = email ? email.slice(0, 2).toUpperCase() : "";
 
+  // Full-screen auth / onboarding pages have their own branding — don't stack
+  // the global nav on top of them (fixes the "two headers" issue).
+  const hideChrome =
+    (pathname?.startsWith("/auth") ?? false) ||
+    pathname === "/employers/signup" ||
+    pathname === "/onboarding";
+  if (hideChrome) return null;
+
   const links = [
     { href: "/engineers", label: "Browse Engineers" },
     { href: "/jobs", label: "Jobs" },
