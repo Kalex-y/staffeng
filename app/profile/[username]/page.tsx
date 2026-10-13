@@ -1,8 +1,28 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Profile, WorkPreferences, Experience, Education, Skill, Achievement } from "@/lib/types";
 import { AVAILABILITY_LABELS, WORK_LOCATION_LABELS, EMPLOYMENT_TYPE_LABELS, CONTRACT_TYPE_LABELS } from "@/lib/types";
+import ContactButton from "@/components/ContactButton";
+
+export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
+  const { username } = await params;
+  const supabase = await createServerSupabaseClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, headline, profile_visibility")
+    .eq("username", username)
+    .maybeSingle<{ full_name: string | null; headline: string | null; profile_visibility: string | null }>();
+
+  if (!profile) return { title: "Engineer profile" };
+  if (profile.profile_visibility === "private") return { title: "Private profile" };
+
+  return {
+    title: profile.full_name ?? "Engineer profile",
+    description: profile.headline ?? undefined,
+  };
+}
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
@@ -43,17 +63,10 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
 
   return (
     <div className="min-h-screen bg-[#F7F6F3]" style={{ fontFamily: "var(--font-jakarta)" }}>
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-[#1B2D4F] text-white text-xs font-bold">SE</span>
-            <span className="text-[#1B2D4F] font-semibold hidden sm:block">staffeng.co</span>
-          </Link>
-          <Link href="/engineers" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">← Browse engineers</Link>
-        </div>
-      </div>
-
       <div className="max-w-5xl mx-auto px-6 py-8">
+        <Link href="/engineers" className="inline-block text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors mb-6">
+          ← Browse engineers
+        </Link>
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-5">
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
@@ -77,6 +90,9 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                   {profile.github_url && <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="#475569"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></a>}
                   {profile.website_url && <a href={profile.website_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg></a>}
                 </div>
+
+                {/* Contact action (bug 1) */}
+                <ContactButton toUserId={profile.id} />
               </div>
             </div>
 
