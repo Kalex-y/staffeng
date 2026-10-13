@@ -51,7 +51,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1B2D4F] text-white text-sm font-bold tracking-tight">SE</span>
           <span className="text-[#1B2D4F] font-semibold text-lg tracking-tight">
-            staff<span className="text-[#2563EB]">eng</span><span className="text-slate-400 font-normal">.co</span>
+            Staff<span className="text-[#2563EB]">Eng</span>
           </span>
         </Link>
 
