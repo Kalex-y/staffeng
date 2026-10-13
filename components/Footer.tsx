@@ -18,7 +18,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between gap-8">
           <div>
             <div className="font-semibold text-lg tracking-tight text-gray-900 mb-2">
-              staffeng<span className="text-indigo-600">.co</span>
+              Staff<span className="text-indigo-600">Eng</span>
             </div>
             <p className="text-sm text-gray-500 max-w-xs">
               Senior staff engineers available to lead agentic engineering and build product & platform features.
@@ -39,7 +39,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs text-gray-400">
-          <span>© {new Date().getFullYear()} staffeng.co. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} StaffEng. All rights reserved.</span>
           <div className="flex items-center gap-5">
             <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms</Link>
