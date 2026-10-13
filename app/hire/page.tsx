@@ -112,7 +112,7 @@ export default function HirePage() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-12 max-w-xl">
             <h2 className="text-3xl font-bold text-gray-900">
-              Why hire on staffeng.co
+              Why hire on StaffEng
             </h2>
             <p className="text-gray-500 mt-3 leading-relaxed">
               A direct line to senior engineering talent, without the overhead of
