@@ -37,9 +37,8 @@ export default function Image() {
             SE
           </div>
           <div style={{ display: "flex", color: "white", fontSize: 36, fontWeight: 600 }}>
-            <span>staff</span>
-            <span style={{ color: "#60A5FA" }}>eng</span>
-            <span style={{ color: "rgba(255,255,255,0.4)" }}>.co</span>
+            <span>Staff</span>
+            <span style={{ color: "#60A5FA" }}>Eng</span>
           </div>
         </div>
 
