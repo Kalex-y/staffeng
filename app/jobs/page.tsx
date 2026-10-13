@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: "Jobs",
+  description: "Open Staff, Senior Staff, and Principal engineering roles posted by companies hiring on staffeng.co.",
+};
 
 export default async function JobsPage() {
   const supabase = await createServerSupabaseClient();
