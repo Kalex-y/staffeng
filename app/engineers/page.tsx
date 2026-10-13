@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import EngineersClient from "./EngineersClient";
 
 export const metadata: Metadata = {
-  title: "Browse Engineers — staffeng.co",
+  title: "Browse Engineers",
   description: "Browse senior staff engineers available for contract and full-time work.",
 };
 
