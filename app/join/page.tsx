@@ -1,8 +1,29 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase";
 
 export default function JoinPage() {
+  const router = useRouter();
+  const supabase = createClient();
+
+  // Signed-in users shouldn't see the "pick an account type" screen.
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: p } = await supabase
+        .from("profiles")
+        .select("account_type")
+        .eq("id", user.id)
+        .maybeSingle();
+      router.replace(p?.account_type === "employer" ? "/employers/dashboard" : "/dashboard");
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-4xl mx-auto px-4 py-16">
@@ -49,8 +70,8 @@ export default function JoinPage() {
               I&apos;m hiring
             </h2>
             <p className="text-slate-500 mt-2 text-sm leading-relaxed">
-              Post roles, browse vetted senior engineers, and reach out
-              directly. Set up your company account to start hiring.
+              Post roles, browse senior engineers, and reach out directly.
+              Set up your company account to start hiring.
             </p>
             <span className="inline-flex items-center gap-1 mt-6 text-sm font-semibold text-[#1B2D4F] group-hover:gap-2 transition-all">
               Create an employer account →
