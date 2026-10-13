@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
@@ -14,6 +14,21 @@ export default function SignupPage() {
   const [success, setSuccess]     = useState(false);
 
   const supabase = createClient();
+
+  // Already signed in? Send them to their dashboard instead of the signup form.
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: p } = await supabase
+        .from("profiles")
+        .select("account_type")
+        .eq("id", user.id)
+        .maybeSingle();
+      router.replace(p?.account_type === "employer" ? "/employers/dashboard" : "/dashboard");
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
