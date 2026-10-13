@@ -10,11 +10,17 @@ type ExperienceEntry = {
   company: string; title: string; location: string;
   start_date: string; end_date: string; is_current: boolean; description: string;
 };
-type EducationEntry = {
-  institution: string; degree: string; field_of_study: string;
-  start_year: string; end_year: string;
-};
 type AchievementEntry = { title: string; description: string; date: string; url: string; };
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+// Accept bare URLs like "linkedin.com/in/jane" by adding a scheme when missing.
+function normalizeUrl(v: string): string | null {
+  const t = v.trim();
+  if (!t) return null;
+  if (/^https?:\/\//i.test(t)) return t;
+  return "https://" + t;
+}
 
 // ─── Step indicator ───────────────────────────────────────────────────────────
 
@@ -53,14 +59,16 @@ function Pill({ label, selected, onClick }: { label: string; selected: boolean; 
 }
 
 // ─── Input ────────────────────────────────────────────────────────────────────
+// The input is rendered INSIDE the <label>, giving an implicit, screen-reader
+// friendly association without needing matching id/htmlFor on every field.
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
-    <div>
-      <label className="block text-xs font-semibold text-slate-700 mb-1.5">{label}</label>
+    <label className="block">
+      <span className="block text-xs font-semibold text-slate-700 mb-1.5">{label}</span>
       {children}
-      {hint && <p className="mt-1 text-[11px] text-slate-400">{hint}</p>}
-    </div>
+      {hint && <span className="mt-1 block text-[11px] text-slate-400">{hint}</span>}
+    </label>
   );
 }
 
@@ -73,8 +81,10 @@ export default function OnboardingPage() {
   const router = useRouter();
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,6 +95,7 @@ export default function OnboardingPage() {
   const [bio, setBio]                 = useState("");
   const [avatarFile, setAvatarFile]   = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [existingAvatarUrl, setExistingAvatarUrl] = useState<string | null>(null);
   const [websiteUrl, setWebsiteUrl]   = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [githubUrl, setGithubUrl]     = useState("");
@@ -113,16 +124,103 @@ export default function OnboardingPage() {
   const [availability, setAvailability]   = useState("open");
   const [resumeFile, setResumeFile]       = useState<File | null>(null);
   const [resumeName, setResumeName]       = useState("");
+  const [existingResumeUrl, setExistingResumeUrl] = useState<string | null>(null);
+  const [existingResumeFilename, setExistingResumeFilename] = useState<string | null>(null);
   const [visibility, setVisibility]       = useState<"public" | "private">("public");
   const [isOpenToWork, setIsOpenToWork]   = useState(true);
 
+  // Load the current user AND their existing profile data so editing prefills
+  // (and saving never wipes fields the user didn't touch).
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push("/auth/login"); return; }
       setUser(user);
-      setFullName(user.user_metadata?.full_name ?? "");
-      if (user.user_metadata?.avatar_url) setAvatarPreview(user.user_metadata.avatar_url);
-    });
+
+      const { data: p } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (p) {
+        setFullName(p.full_name ?? user.user_metadata?.full_name ?? "");
+        setHeadline(p.headline ?? "");
+        setLocation(p.location ?? "");
+        setBio(p.bio ?? "");
+        setWebsiteUrl(p.website_url ?? "");
+        setLinkedinUrl(p.linkedin_url ?? "");
+        setGithubUrl(p.github_url ?? "");
+        setVisibility((p.profile_visibility as "public" | "private") ?? "public");
+        setIsOpenToWork(p.is_open_to_work ?? true);
+        if (p.avatar_url) {
+          setAvatarPreview(p.avatar_url);
+          setExistingAvatarUrl(p.avatar_url);
+        } else if (user.user_metadata?.avatar_url) {
+          setAvatarPreview(user.user_metadata.avatar_url);
+        }
+        if (p.resume_url) {
+          setExistingResumeUrl(p.resume_url);
+          setExistingResumeFilename(p.resume_filename ?? null);
+          setResumeName(p.resume_filename ?? "Resume.pdf");
+        }
+      } else {
+        setFullName(user.user_metadata?.full_name ?? "");
+        if (user.user_metadata?.avatar_url) setAvatarPreview(user.user_metadata.avatar_url);
+      }
+
+      const { data: wp } = await supabase
+        .from("work_preferences")
+        .select("*")
+        .eq("profile_id", user.id)
+        .maybeSingle();
+      if (wp) {
+        setWorkLocation(wp.work_location ?? []);
+        setEmploymentType(wp.employment_type ?? []);
+        setContractType(wp.contract_type ?? []);
+        setOnCall(wp.on_call ?? false);
+        setAvailability(wp.availability ?? "open");
+      }
+
+      const { data: exps } = await supabase
+        .from("experiences")
+        .select("*")
+        .eq("profile_id", user.id)
+        .order("start_date", { ascending: false });
+      if (exps && exps.length) {
+        setExperiences(exps.map((e) => ({
+          company: e.company ?? "",
+          title: e.title ?? "",
+          location: e.location ?? "",
+          start_date: e.start_date ?? "",
+          end_date: e.end_date ?? "",
+          is_current: e.is_current ?? false,
+          description: e.description ?? "",
+        })));
+      }
+
+      const { data: sk } = await supabase
+        .from("skills")
+        .select("name")
+        .eq("profile_id", user.id);
+      if (sk && sk.length) setSkills(sk.map((s) => s.name).filter(Boolean));
+
+      const { data: ach } = await supabase
+        .from("achievements")
+        .select("*")
+        .eq("profile_id", user.id);
+      if (ach && ach.length) {
+        setAchievements(ach.map((a) => ({
+          title: a.title ?? "",
+          description: a.description ?? "",
+          date: a.date ?? "",
+          url: a.url ?? "",
+        })));
+      }
+
+      setLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,47 +264,59 @@ export default function OnboardingPage() {
   const handleFinish = async () => {
     if (!user) return;
     setSaving(true);
+    setError(null);
 
     try {
-      // Upload avatar
-      let avatarUrl = avatarPreview;
+      // Avatar: only ever store a real URL. Start from the existing one; replace
+      // only if a new file uploads successfully. Never persist a blob: preview.
+      let avatarUrl = existingAvatarUrl;
       if (avatarFile) {
         const ext = avatarFile.name.split(".").pop();
-        const { data } = await supabase.storage
+        const { data, error: upErr } = await supabase.storage
           .from("avatars")
           .upload(`${user.id}/avatar.${ext}`, avatarFile, { upsert: true });
+        if (upErr) {
+          setError(`Photo upload failed: ${upErr.message}`);
+          setSaving(false);
+          return;
+        }
         if (data) {
           const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(data.path);
           avatarUrl = urlData.publicUrl;
         }
       }
 
-      // Upload resume
-      let resumeUrl = null;
-      let resumeFilename = null;
+      // Resume: keep the existing one unless a new file is uploaded.
+      let resumeUrl = existingResumeUrl;
+      let resumeFilename = existingResumeFilename;
       if (resumeFile) {
         const ext = resumeFile.name.split(".").pop();
-        const { data } = await supabase.storage
+        const { data, error: upErr } = await supabase.storage
           .from("resumes")
           .upload(`${user.id}/resume.${ext}`, resumeFile, { upsert: true });
+        if (upErr) {
+          setError(`Resume upload failed: ${upErr.message}`);
+          setSaving(false);
+          return;
+        }
         if (data) {
           const { data: urlData } = await supabase.storage.from("resumes").createSignedUrl(data.path, 60 * 60 * 24 * 365);
-          resumeUrl = urlData?.signedUrl ?? null;
+          resumeUrl = urlData?.signedUrl ?? resumeUrl;
           resumeFilename = resumeFile.name;
         }
       }
 
       // Upsert profile
-      await supabase.from("profiles").upsert({
+      const { error: profErr } = await supabase.from("profiles").upsert({
         id: user.id,
         full_name: fullName,
         headline,
         location,
         bio,
         avatar_url: avatarUrl,
-        website_url: websiteUrl || null,
-        linkedin_url: linkedinUrl || null,
-        github_url: githubUrl || null,
+        website_url: normalizeUrl(websiteUrl),
+        linkedin_url: normalizeUrl(linkedinUrl),
+        github_url: normalizeUrl(githubUrl),
         profile_visibility: visibility,
         is_open_to_work: isOpenToWork,
         resume_url: resumeUrl,
@@ -214,6 +324,11 @@ export default function OnboardingPage() {
         onboarding_completed: true,
         updated_at: new Date().toISOString(),
       });
+      if (profErr) {
+        setError(profErr.message);
+        setSaving(false);
+        return;
+      }
 
       // Work preferences
       await supabase.from("work_preferences").upsert({
@@ -226,34 +341,34 @@ export default function OnboardingPage() {
         updated_at: new Date().toISOString(),
       });
 
-      // Experience
+      // Experience — replace the set so removals persist too.
+      await supabase.from("experiences").delete().eq("profile_id", user.id);
       if (experiences.length > 0) {
-        await supabase.from("experiences").delete().eq("profile_id", user.id);
         await supabase.from("experiences").insert(
           experiences.map(e => ({ ...e, profile_id: user.id }))
         );
       }
 
       // Skills
+      await supabase.from("skills").delete().eq("profile_id", user.id);
       if (skills.length > 0) {
-        await supabase.from("skills").delete().eq("profile_id", user.id);
         await supabase.from("skills").insert(
           skills.map(name => ({ profile_id: user.id, name }))
         );
       }
 
       // Achievements
+      await supabase.from("achievements").delete().eq("profile_id", user.id);
       if (achievements.length > 0) {
-        await supabase.from("achievements").delete().eq("profile_id", user.id);
         await supabase.from("achievements").insert(
-          achievements.map(a => ({ ...a, profile_id: user.id, date: a.date || null, url: a.url || null }))
+          achievements.map(a => ({ ...a, profile_id: user.id, date: a.date || null, url: normalizeUrl(a.url) }))
         );
       }
 
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
-    } finally {
+      setError("Something went wrong while saving. Please try again.");
       setSaving(false);
     }
   };
@@ -266,9 +381,17 @@ export default function OnboardingPage() {
     "Preferences",
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F7F6F3] flex items-center justify-center">
+        <p className="text-slate-400 text-sm">Loading your profile…</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F7F6F3]" style={{ fontFamily: "var(--font-jakarta)" }}>
-      {/* Top bar */}
+      {/* Setup progress bar */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -350,13 +473,13 @@ export default function OnboardingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Field label="Website">
-                <input type="url" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} placeholder="https://yoursite.com" className={inputCls} />
+                <input type="text" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} placeholder="yoursite.com" className={inputCls} />
               </Field>
               <Field label="LinkedIn">
-                <input type="url" value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)} placeholder="linkedin.com/in/…" className={inputCls} />
+                <input type="text" value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)} placeholder="linkedin.com/in/…" className={inputCls} />
               </Field>
               <Field label="GitHub">
-                <input type="url" value={githubUrl} onChange={e => setGithubUrl(e.target.value)} placeholder="github.com/…" className={inputCls} />
+                <input type="text" value={githubUrl} onChange={e => setGithubUrl(e.target.value)} placeholder="github.com/…" className={inputCls} />
               </Field>
             </div>
           </div>
@@ -505,7 +628,7 @@ export default function OnboardingPage() {
                     <input type="month" value={newAchv.date} onChange={e => setNewAchv({ ...newAchv, date: e.target.value })} className={inputCls} />
                   </Field>
                   <Field label="URL">
-                    <input type="url" value={newAchv.url} onChange={e => setNewAchv({ ...newAchv, url: e.target.value })} placeholder="https://…" className={inputCls} />
+                    <input type="text" value={newAchv.url} onChange={e => setNewAchv({ ...newAchv, url: e.target.value })} placeholder="https://…" className={inputCls} />
                   </Field>
                 </div>
                 <div className="flex gap-3">
@@ -646,13 +769,19 @@ export default function OnboardingPage() {
           </div>
         )}
 
+        {error && (
+          <div className="mt-6 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
         {/* ── Navigation ── */}
         <div className="mt-10 flex items-center justify-between pt-6 border-t border-slate-200">
           <button
-            onClick={() => step > 0 ? setStep(step - 1) : router.push("/")}
+            onClick={() => step > 0 ? setStep(step - 1) : router.push("/dashboard")}
             className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
           >
-            ← {step === 0 ? "Back to home" : "Previous"}
+            ← {step === 0 ? "Back to dashboard" : "Previous"}
           </button>
 
           <div className="flex items-center gap-3">
@@ -682,7 +811,7 @@ export default function OnboardingPage() {
                     </svg>
                     Saving profile…
                   </>
-                ) : "Complete profile →"}
+                ) : "Save profile →"}
               </button>
             )}
           </div>
