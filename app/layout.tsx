@@ -9,22 +9,22 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.staffeng.co"),
   title: {
-    default: "staffeng.co — Senior Staff Engineers for Hire",
-    template: "%s · staffeng.co",
+    default: "StaffEng — Senior Staff Engineers for Hire",
+    template: "%s · StaffEng",
   },
   description:
     "Hire senior staff engineers to lead agentic engineering and build product & platform features. No recruiters, no agencies.",
   openGraph: {
-    title: "staffeng.co — Senior Staff Engineers for Hire",
+    title: "StaffEng — Senior Staff Engineers for Hire",
     description:
       "Hire senior staff engineers to lead agentic engineering and build product & platform features.",
     url: "https://www.staffeng.co",
-    siteName: "staffeng.co",
+    siteName: "StaffEng",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "staffeng.co — Senior Staff Engineers for Hire",
+    title: "StaffEng — Senior Staff Engineers for Hire",
     description:
       "Hire senior staff engineers to lead agentic engineering and build product & platform features.",
   },
