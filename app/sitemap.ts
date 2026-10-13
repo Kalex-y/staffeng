@@ -12,9 +12,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/join",
     "/terms",
     "/privacy",
-    "/auth/login",
-    "/auth/signup",
-    "/employers/signup",
   ];
 
   return routes.map((route) => ({
