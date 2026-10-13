@@ -10,25 +10,29 @@ export default function Footer() {
               staffeng<span className="text-indigo-600">.co</span>
             </div>
             <p className="text-sm text-gray-500 max-w-xs">
-              Vetted staff engineers available to lead agentic engineering and build product & platform features.
+              Senior staff engineers available to lead agentic engineering and build product & platform features.
             </p>
           </div>
           <div className="flex gap-16 text-sm">
             <div className="flex flex-col gap-3">
               <span className="font-medium text-gray-900">For companies</span>
               <Link href="/engineers" className="text-gray-500 hover:text-gray-900 transition-colors">Browse engineers</Link>
+              <Link href="/hire" className="text-gray-500 hover:text-gray-900 transition-colors">Hire engineers</Link>
               <Link href="/#how-it-works" className="text-gray-500 hover:text-gray-900 transition-colors">How it works</Link>
-              <Link href="/#for-companies" className="text-gray-500 hover:text-gray-900 transition-colors">Pricing</Link>
             </div>
             <div className="flex flex-col gap-3">
               <span className="font-medium text-gray-900">For engineers</span>
-              <Link href="mailto:hello@staffeng.co" className="text-gray-500 hover:text-gray-900 transition-colors">Apply to list</Link>
-              <Link href="mailto:hello@staffeng.co" className="text-gray-500 hover:text-gray-900 transition-colors">Contact</Link>
+              <Link href="/auth/signup" className="text-gray-500 hover:text-gray-900 transition-colors">Create a profile</Link>
+              <Link href="mailto:support@staffeng.co" className="text-gray-500 hover:text-gray-900 transition-colors">Contact</Link>
             </div>
           </div>
         </div>
-        <div className="mt-10 pt-6 border-t border-gray-100 text-xs text-gray-400">
-          © {new Date().getFullYear()} staffeng.co. All rights reserved.
+        <div className="mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs text-gray-400">
+          <span>© {new Date().getFullYear()} staffeng.co. All rights reserved.</span>
+          <div className="flex items-center gap-5">
+            <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms</Link>
+          </div>
         </div>
       </div>
     </footer>
