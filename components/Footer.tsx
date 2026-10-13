@@ -1,6 +1,17 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  // Hide the footer on full-screen auth / onboarding pages so they stay clean.
+  const hide =
+    (pathname?.startsWith("/auth") ?? false) ||
+    pathname === "/employers/signup" ||
+    pathname === "/onboarding";
+  if (hide) return null;
+
   return (
     <footer className="border-t border-gray-100 bg-white">
       <div className="max-w-6xl mx-auto px-6 py-12">
