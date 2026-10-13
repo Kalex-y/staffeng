@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import type { LiveJob, JobLevel } from "@/lib/jobFetcher";
 import JobCard from "@/components/JobCard";
 
@@ -341,17 +342,17 @@ export default function JobsClient({ initialJobs }: { initialJobs: LiveJob[] }) 
                   Hiring a Staff or Principal Engineer?
                 </h3>
                 <p className="text-white/60 text-sm mb-6 max-w-sm mx-auto">
-                  Get your role in front of 5,000+ senior engineers actively exploring their next move.
+                  Get your role in front of senior engineers exploring their next move.
                 </p>
-                <a
-                  href="mailto:jobs@staffeng.co?subject=Post a role on staffeng.co"
+                <Link
+                  href="/employers/signup"
                   className="inline-flex items-center gap-2 bg-white text-[#1B2D4F] font-semibold px-6 py-3 rounded-xl hover:bg-slate-100 transition-colors text-sm"
                 >
-                  Get in touch
+                  Post a role
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2.5 6H9.5M6.5 3L9.5 6L6.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
