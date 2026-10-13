@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Privacy Policy · StaffEng",
+  title: "Privacy Policy",
 };
 
 export default function PrivacyPage() {
