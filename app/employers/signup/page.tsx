@@ -74,7 +74,7 @@ export default function EmployerSignupPage() {
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle at 20% 80%, #2563EB 0%, transparent 50%), radial-gradient(circle at 80% 20%, #7C3AED 0%, transparent 50%)" }} />
         <Link href="/" className="relative inline-flex items-center gap-2">
           <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 text-white text-sm font-bold">SE</span>
-          <span className="text-white font-semibold text-lg">staff<span className="text-blue-400">eng</span><span className="text-white/30">.co</span></span>
+          <span className="text-white font-semibold text-lg">Staff<span className="text-blue-400">Eng</span></span>
         </Link>
         <div className="relative">
           <h2 className="text-4xl font-bold text-white leading-tight mb-4" style={{ fontFamily: "var(--font-fraunces)" }}>Hire experienced Staff & Principal Engineers.</h2>
@@ -87,7 +87,7 @@ export default function EmployerSignupPage() {
         <div className="w-full max-w-[400px]">
           <Link href="/" className="flex items-center gap-2 mb-10 lg:hidden">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1B2D4F] text-white text-sm font-bold">SE</span>
-            <span className="text-[#1B2D4F] font-semibold">staffeng.co</span>
+            <span className="text-[#1B2D4F] font-semibold">StaffEng</span>
           </Link>
 
           <div className="mb-8">
