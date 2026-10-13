@@ -144,7 +144,7 @@ export default function HomePage() {
             </h2>
             <p className="text-gray-500 mt-3 leading-relaxed">
               Traditional talent platforms weren&apos;t designed for the moment
-              we&apos;re in. staffeng.co is.
+              we&apos;re in. StaffEng is.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6">
