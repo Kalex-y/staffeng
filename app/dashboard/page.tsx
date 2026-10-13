@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Profile, WorkPreferences, Experience, Skill } from "@/lib/types";
 import { AVAILABILITY_LABELS, WORK_LOCATION_LABELS } from "@/lib/types";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
@@ -37,18 +42,20 @@ export default async function DashboardPage() {
   if (!profile) redirect("/onboarding");
   if (!profile.onboarding_completed) redirect("/onboarding");
 
-  // Profile completeness
-  const checks = [
-    !!profile.full_name,
-    !!profile.headline,
-    !!profile.bio,
-    !!profile.avatar_url,
-    (experiences?.length ?? 0) > 0,
-    (skills?.length ?? 0) > 0,
-    !!profile.resume_url,
-    !!prefs,
+  // Profile completeness — ONE source of truth for both the % and the checklist,
+  // so the number always matches the list the user sees.
+  const checklist = [
+    { done: !!profile.full_name && !!profile.headline, label: "Add headline" },
+    { done: !!profile.bio, label: "Write your bio" },
+    { done: !!profile.avatar_url, label: "Upload photo" },
+    { done: (experiences?.length ?? 0) > 0, label: "Add experience" },
+    { done: (skills?.length ?? 0) > 0, label: "Add skills" },
+    { done: !!profile.resume_url, label: "Upload resume" },
+    { done: !!prefs, label: "Set work preferences" },
   ];
-  const completeness = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+  const completeness = Math.round(
+    (checklist.filter((c) => c.done).length / checklist.length) * 100
+  );
 
   const initials = (profile.full_name ?? "??")
     .split(" ")
@@ -59,27 +66,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#F7F6F3]" style={{ fontFamily: "var(--font-jakarta)" }}>
-      {/* Top nav */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1B2D4F] text-white text-sm font-bold">SE</span>
-            <span className="text-[#1B2D4F] font-semibold text-lg hidden sm:block">
-              staff<span className="text-[#2563EB]">eng</span><span className="text-slate-300">.co</span>
-            </span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/jobs" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors hidden sm:block">Browse jobs</Link>
-            <Link href={`/profile/${profile.username}`} className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors hidden sm:block">View profile</Link>
-            <div className="w-9 h-9 rounded-full overflow-hidden bg-[#1B2D4F] flex items-center justify-center text-white text-sm font-bold">
-              {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt={profile.full_name ?? ""} className="w-full h-full object-cover" />
-              ) : initials}
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="max-w-6xl mx-auto px-6 py-10">
         <div className="grid lg:grid-cols-3 gap-6">
 
@@ -145,15 +131,7 @@ export default async function DashboardPage() {
                 />
               </div>
               <div className="mt-4 space-y-2">
-                {[
-                  { done: !!profile.full_name && !!profile.headline, label: "Add headline" },
-                  { done: !!profile.bio, label: "Write your bio" },
-                  { done: !!profile.avatar_url, label: "Upload photo" },
-                  { done: (experiences?.length ?? 0) > 0, label: "Add experience" },
-                  { done: (skills?.length ?? 0) > 0, label: "Add skills" },
-                  { done: !!profile.resume_url, label: "Upload resume" },
-                  { done: !!prefs, label: "Set work preferences" },
-                ].map(item => (
+                {checklist.map(item => (
                   <div key={item.label} className={`flex items-center gap-2 text-xs ${item.done ? "text-slate-400" : "text-slate-600"}`}>
                     {item.done ? (
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#DCFCE7"/><path d="M4 7L6 9L10 5" stroke="#16A34A" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
