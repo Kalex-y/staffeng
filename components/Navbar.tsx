@@ -60,6 +60,7 @@ export default function Navbar() {
   const hideChrome =
     (pathname?.startsWith("/auth") ?? false) ||
     pathname === "/employers/signup" ||
+    pathname === "/employers/onboarding" ||
     pathname === "/onboarding";
   if (hideChrome) return null;
 
