@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { fetchAllJobs } from "@/lib/jobFetcher";
 import JobsClient from "@/components/JobsClient";
 
-export const revalidate = 14400;
+export const revalidate = 1800;
 
 export const metadata: Metadata = {
   title: "Jobs",

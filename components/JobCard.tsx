@@ -7,15 +7,6 @@ const levelStyles: Record<string, string> = {
   "Principal Engineer":    "bg-amber-50 text-amber-700 border-amber-100",
 };
 
-const sourceLabels: Record<string, string> = {
-  greenhouse: "Greenhouse",
-  lever: "Lever",
-  ashby: "Ashby",
-  smartrecruiters: "SmartRecruiters",
-  workable: "Workable",
-  recruitee: "Recruitee",
-};
-
 export default function JobCard({ job }: { job: LiveJob }) {
   return (
     <a
@@ -40,14 +31,8 @@ export default function JobCard({ job }: { job: LiveJob }) {
             {job.title}
           </h3>
 
-          {/* Company + source */}
-          <p className="text-slate-500 text-[13px] mt-0.5">
-            {job.company}
-            <span className="text-slate-300 mx-1.5">·</span>
-            <span className="text-[11px] text-slate-400">
-              via {sourceLabels[job.source] ?? job.source}
-            </span>
-          </p>
+          {/* Company */}
+          <p className="text-slate-500 text-[13px] mt-0.5">{job.company}</p>
 
           {/* Badges */}
           <div className="flex flex-wrap items-center gap-2 mt-3">

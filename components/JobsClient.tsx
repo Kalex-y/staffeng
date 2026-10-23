@@ -156,7 +156,7 @@ export default function JobsClient({ initialJobs }: { initialJobs: LiveJob[] }) 
 
           <span className="ml-auto hidden lg:flex items-center gap-1.5 text-[11px] text-slate-400">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Refreshed every 4 hours
+            Updated continuously
           </span>
         </div>
 
@@ -240,30 +240,6 @@ export default function JobsClient({ initialJobs }: { initialJobs: LiveJob[] }) 
                       </label>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Sources */}
-              <div className="mt-6 pt-5 border-t border-slate-100">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                  Sources
-                </h3>
-                <div className="space-y-1.5">
-                  {Object.entries(
-                    initialJobs.reduce((acc: Record<string, number>, j) => {
-                      acc[j.source] = (acc[j.source] ?? 0) + 1;
-                      return acc;
-                    }, {})
-                  )
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([src, count]) => (
-                      <div key={src} className="flex items-center justify-between">
-                        <span className="text-sm text-slate-500 capitalize">
-                          {({ greenhouse: "Greenhouse", lever: "Lever", ashby: "Ashby", smartrecruiters: "SmartRecruiters", workable: "Workable", recruitee: "Recruitee" } as Record<string, string>)[src] ?? src}
-                        </span>
-                        <span className="text-[11px] text-slate-400">{count}</span>
-                      </div>
-                    ))}
                 </div>
               </div>
             </div>
