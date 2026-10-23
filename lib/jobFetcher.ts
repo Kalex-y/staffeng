@@ -190,7 +190,7 @@ function detectRemote(location: string): boolean {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRecord = Record<string, any>;
 
-const FETCH_OPTS = { next: { revalidate: 14400 }, headers: { Accept: "application/json" } };
+const FETCH_OPTS = { next: { revalidate: 1800 }, headers: { Accept: "application/json" } };
 
 function join(...parts: (string | undefined | null)[]): string {
   return parts.filter(Boolean).join(", ");
