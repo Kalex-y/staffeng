@@ -18,10 +18,10 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between gap-8">
           <div>
             <div className="font-semibold text-lg tracking-tight text-gray-900 mb-2">
-              Staff<span className="text-indigo-600">Eng</span>
+              Staff<span className="text-[#2563EB]">Eng</span>
             </div>
             <p className="text-sm text-gray-500 max-w-xs">
-              Senior staff engineers available to lead agentic engineering and build product & platform features.
+              Where companies hire senior engineers — directly.
             </p>
           </div>
           <div className="flex gap-16 text-sm">
@@ -33,7 +33,7 @@ export default function Footer() {
             </div>
             <div className="flex flex-col gap-3">
               <span className="font-medium text-gray-900">For engineers</span>
-              <Link href="/auth/signup" className="text-gray-500 hover:text-gray-900 transition-colors">Create a profile</Link>
+              <Link href="/join" className="text-gray-500 hover:text-gray-900 transition-colors">Create a profile</Link>
               <Link href="mailto:support@staffeng.co" className="text-gray-500 hover:text-gray-900 transition-colors">Contact</Link>
             </div>
           </div>

@@ -19,10 +19,10 @@ export default async function EmployerDashboardPage() {
   const initials = company.name.slice(0, 2).toUpperCase();
 
   const actions = [
-    { href: "/employers/engineers", icon: "🔍", title: "Find engineers", desc: "Search engineer profiles and reach out directly." },
-    { href: "/employers/jobs/new", icon: "📝", title: "Post a role", desc: "Publish a Staff or Principal opening." },
-    { href: "/employers/jobs", icon: "📋", title: "Your roles", desc: "Manage posts and review applicants." },
-    { href: "/employers/messages", icon: "✉️", title: "Messages", desc: "Your outreach and conversations." },
+    { href: "/employers/engineers", title: "Find engineers", desc: "Search engineer profiles and reach out directly.", icon: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></> },
+    { href: "/employers/jobs/new", title: "Post a role", desc: "Publish a Staff or Principal opening.", icon: <path d="M4 20h4l10-10a2.1 2.1 0 00-3-3L5 17v3z" /> },
+    { href: "/employers/jobs", title: "Your roles", desc: "Manage posts and review applicants.", icon: <><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 9h8M8 13h8M8 17h5" /></> },
+    { href: "/employers/messages", title: "Messages", desc: "Your outreach and conversations.", icon: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></> },
   ];
 
   return (
@@ -44,8 +44,10 @@ export default async function EmployerDashboardPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {actions.map((a) => (
             <Link key={a.href} href={a.href} className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-slate-300 transition-all" style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}>
-              <span className="text-2xl">{a.icon}</span>
-              <p className="font-semibold text-slate-900 mt-2">{a.title}</p>
+              <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{a.icon}</svg>
+              </span>
+              <p className="font-semibold text-slate-900 mt-3">{a.title}</p>
               <p className="text-slate-500 text-sm mt-1">{a.desc}</p>
             </Link>
           ))}

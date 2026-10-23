@@ -190,7 +190,7 @@ export default async function DashboardPage() {
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 80% 50%, #2563EB, transparent 60%)" }} />
               <div className="relative">
                 <h1 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-fraunces)" }}>
-                  Welcome back, {profile.full_name?.split(" ")[0]} 👋
+                  Welcome back
                 </h1>
                 <p className="text-white/60 text-sm">
                   {completeness < 100
@@ -208,10 +208,22 @@ export default async function DashboardPage() {
             {/* Quick actions */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                { href: "/onboarding", icon: "✏️", label: "Edit profile" },
-                { href: `/profile/${profile.username}`, icon: "👁️", label: "Preview profile" },
-                { href: "/jobs", icon: "💼", label: "Browse jobs" },
-                { href: "/inbox", icon: "✉️", label: "Inbox" },
+                {
+                  href: "/onboarding", label: "Edit profile",
+                  icon: <path d="M4 20h4l10-10a2.1 2.1 0 00-3-3L5 17v3z" />,
+                },
+                {
+                  href: `/profile/${profile.username}`, label: "Preview profile",
+                  icon: <><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" /></>,
+                },
+                {
+                  href: "/jobs", label: "Browse jobs",
+                  icon: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" /></>,
+                },
+                {
+                  href: "/inbox", label: "Inbox",
+                  icon: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></>,
+                },
               ].map(action => (
                 <Link
                   key={action.href}
@@ -219,7 +231,11 @@ export default async function DashboardPage() {
                   className="bg-white rounded-2xl border border-slate-200 p-4 text-center hover:border-slate-300 hover:shadow-card-hover transition-all"
                   style={{ boxShadow: "0 1px 3px 0 rgba(15,23,42,0.06)" }}
                 >
-                  <span className="text-2xl">{action.icon}</span>
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 mx-auto">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                      {action.icon}
+                    </svg>
+                  </span>
                   <p className="text-xs font-semibold text-slate-700 mt-2">{action.label}</p>
                 </Link>
               ))}
