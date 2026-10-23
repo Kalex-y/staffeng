@@ -249,15 +249,21 @@ export default function JobsClient({ initialJobs }: { initialJobs: LiveJob[] }) 
                   Sources
                 </h3>
                 <div className="space-y-1.5">
-                  {[
-                    { label: "Greenhouse", count: initialJobs.filter((j) => j.source === "greenhouse").length },
-                    { label: "Lever",      count: initialJobs.filter((j) => j.source === "lever").length      },
-                  ].map(({ label, count }) => (
-                    <div key={label} className="flex items-center justify-between">
-                      <span className="text-sm text-slate-500">{label}</span>
-                      <span className="text-[11px] text-slate-400">{count}</span>
-                    </div>
-                  ))}
+                  {Object.entries(
+                    initialJobs.reduce((acc: Record<string, number>, j) => {
+                      acc[j.source] = (acc[j.source] ?? 0) + 1;
+                      return acc;
+                    }, {})
+                  )
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([src, count]) => (
+                      <div key={src} className="flex items-center justify-between">
+                        <span className="text-sm text-slate-500 capitalize">
+                          {({ greenhouse: "Greenhouse", lever: "Lever", ashby: "Ashby", smartrecruiters: "SmartRecruiters", workable: "Workable", recruitee: "Recruitee" } as Record<string, string>)[src] ?? src}
+                        </span>
+                        <span className="text-[11px] text-slate-400">{count}</span>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
