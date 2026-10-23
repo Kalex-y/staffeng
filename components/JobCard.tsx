@@ -7,15 +7,6 @@ const levelStyles: Record<string, string> = {
   "Principal Engineer":    "bg-amber-50 text-amber-700 border-amber-100",
 };
 
-const sourceLabels: Record<string, string> = {
-  greenhouse: "Greenhouse",
-  lever: "Lever",
-  ashby: "Ashby",
-  smartrecruiters: "SmartRecruiters",
-  workable: "Workable",
-  recruitee: "Recruitee",
-};
-
 export default function JobCard({ job }: { job: LiveJob }) {
   return (
     <a
