@@ -63,7 +63,8 @@ export default function EmployerMessagesPage() {
       .order("created_at", { ascending: false });
 
     if (reqErr) {
-      setError(reqErr.message);
+      console.error(reqErr);
+      setError("We couldn't load your messages. Please try again.");
       setLoading(false);
       return;
     }

@@ -39,6 +39,9 @@ export default async function DashboardPage() {
     .eq("profile_id", user.id)
     .returns<Skill[]>();
 
+  // Employers belong on their own dashboard, not the engineer profile setup.
+  if (profile?.account_type === "employer") redirect("/employers/dashboard");
+
   if (!profile) redirect("/onboarding");
   if (!profile.onboarding_completed) redirect("/onboarding");
 
@@ -51,7 +54,14 @@ export default async function DashboardPage() {
     { done: (experiences?.length ?? 0) > 0, label: "Add experience" },
     { done: (skills?.length ?? 0) > 0, label: "Add skills" },
     { done: !!profile.resume_url, label: "Upload resume" },
-    { done: !!prefs, label: "Set work preferences" },
+    {
+      done: !!prefs && (
+        (prefs.work_location?.length ?? 0) > 0 ||
+        (prefs.employment_type?.length ?? 0) > 0 ||
+        (prefs.contract_type?.length ?? 0) > 0
+      ),
+      label: "Set work preferences",
+    },
   ];
   const completeness = Math.round(
     (checklist.filter((c) => c.done).length / checklist.length) * 100

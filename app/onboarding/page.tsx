@@ -41,6 +41,7 @@ function Pill({ label, selected, onClick }: { label: string; selected: boolean; 
   return (
     <button
       type="button"
+      aria-pressed={selected}
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
         selected
@@ -239,7 +240,10 @@ export default function OnboardingPage() {
 
   const addSkill = () => {
     const s = skillInput.trim();
-    if (s && !skills.includes(s)) setSkills([...skills, s]);
+    // Case-insensitive de-dupe so "Python" and "python" aren't both added.
+    if (s && !skills.some((x) => x.toLowerCase() === s.toLowerCase())) {
+      setSkills([...skills, s]);
+    }
     setSkillInput("");
   };
 
@@ -330,8 +334,9 @@ export default function OnboardingPage() {
         return;
       }
 
-      // Work preferences
-      await supabase.from("work_preferences").upsert({
+      // Work preferences — onConflict targets the one row per engineer so it
+      // updates instead of silently inserting a duplicate (or failing).
+      const { error: prefErr } = await supabase.from("work_preferences").upsert({
         profile_id: user.id,
         work_location: workLocation,
         employment_type: employmentType,
@@ -339,7 +344,12 @@ export default function OnboardingPage() {
         on_call: onCall,
         availability,
         updated_at: new Date().toISOString(),
-      });
+      }, { onConflict: "profile_id" });
+      if (prefErr) {
+        setError(prefErr.message);
+        setSaving(false);
+        return;
+      }
 
       // Experience — replace the set so removals persist too.
       await supabase.from("experiences").delete().eq("profile_id", user.id);
@@ -586,8 +596,8 @@ export default function OnboardingPage() {
             <div>
               <p className="text-xs text-slate-400 mb-3">Common skills to add:</p>
               <div className="flex flex-wrap gap-2">
-                {["TypeScript", "Python", "Go", "Rust", "Kubernetes", "AWS", "Distributed Systems", "Platform Engineering", "LLM Integration", "Agentic Systems", "ML Infrastructure", "System Design"].filter(s => !skills.includes(s)).map(s => (
-                  <button key={s} onClick={() => setSkills([...skills, s])} className="text-xs text-slate-500 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors">
+                {["TypeScript", "Python", "Go", "Rust", "Kubernetes", "AWS", "Distributed Systems", "Platform Engineering", "LLM Integration", "Agentic Systems", "ML Infrastructure", "System Design"].filter(s => !skills.some(x => x.toLowerCase() === s.toLowerCase())).map(s => (
+                  <button type="button" key={s} onClick={() => setSkills([...skills, s])} className="text-xs text-slate-500 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors">
                     + {s}
                   </button>
                 ))}
@@ -707,6 +717,9 @@ export default function OnboardingPage() {
               </div>
               <button
                 type="button"
+                role="switch"
+                aria-checked={isOpenToWork}
+                aria-label="Open to work"
                 onClick={() => setIsOpenToWork(!isOpenToWork)}
                 className={`relative w-12 h-6 rounded-full transition-colors ${isOpenToWork ? "bg-emerald-500" : "bg-slate-200"}`}
               >
@@ -756,6 +769,8 @@ export default function OnboardingPage() {
                   <button
                     key={opt.val}
                     type="button"
+                    aria-pressed={visibility === opt.val}
+                    aria-label={`${opt.title} profile`}
                     onClick={() => setVisibility(opt.val)}
                     className={`text-left p-4 rounded-2xl border-2 transition-all ${visibility === opt.val ? "border-[#1B2D4F] bg-white" : "border-slate-200 bg-white hover:border-slate-300"}`}
                   >
@@ -778,6 +793,7 @@ export default function OnboardingPage() {
         {/* ── Navigation ── */}
         <div className="mt-10 flex items-center justify-between pt-6 border-t border-slate-200">
           <button
+            type="button"
             onClick={() => step > 0 ? setStep(step - 1) : router.push("/dashboard")}
             className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
           >
@@ -786,12 +802,13 @@ export default function OnboardingPage() {
 
           <div className="flex items-center gap-3">
             {step < 4 && (
-              <button onClick={() => setStep(step + 1)} className="text-sm text-slate-400 hover:text-slate-600 transition-colors">
+              <button type="button" onClick={() => setStep(step + 1)} className="text-sm text-slate-400 hover:text-slate-600 transition-colors">
                 Skip for now
               </button>
             )}
             {step < 4 ? (
               <button
+                type="button"
                 onClick={() => setStep(step + 1)}
                 className="bg-[#1B2D4F] hover:bg-[#142240] text-white font-semibold text-sm px-6 py-3 rounded-xl transition-colors"
               >
@@ -799,6 +816,7 @@ export default function OnboardingPage() {
               </button>
             ) : (
               <button
+                type="button"
                 onClick={handleFinish}
                 disabled={saving}
                 className="bg-[#1B2D4F] hover:bg-[#142240] disabled:opacity-60 text-white font-semibold text-sm px-8 py-3 rounded-xl transition-colors flex items-center gap-2"

@@ -28,6 +28,22 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   const { username } = await params;
   const supabase = await createServerSupabaseClient();
 
+  // Where "← Browse engineers" should go depends on who's viewing.
+  const { data: { user: viewer } } = await supabase.auth.getUser();
+  let backHref = "/engineers";
+  let backLabel = "Browse engineers";
+  if (viewer) {
+    const { data: vp } = await supabase
+      .from("profiles")
+      .select("account_type")
+      .eq("id", viewer.id)
+      .maybeSingle();
+    if (vp?.account_type === "employer") {
+      backHref = "/employers/engineers";
+      backLabel = "Find engineers";
+    }
+  }
+
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
@@ -64,8 +80,8 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   return (
     <div className="min-h-screen bg-[#F7F6F3]" style={{ fontFamily: "var(--font-jakarta)" }}>
       <div className="max-w-5xl mx-auto px-6 py-8">
-        <Link href="/engineers" className="inline-block text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors mb-6">
-          ← Browse engineers
+        <Link href={backHref} className="inline-block text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors mb-6">
+          ← {backLabel}
         </Link>
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-5">
