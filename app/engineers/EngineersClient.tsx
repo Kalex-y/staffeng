@@ -35,11 +35,11 @@ const AVAILABILITY_OPTIONS = ["immediately", "one_month", "three_months", "open"
 
 const SENIORITY_OPTIONS = ["Principal", "Senior Staff", "Staff"];
 
-export default function EngineersClient() {
+export default function EngineersClient({ initialEngineers }: { initialEngineers?: EngineerProfile[] }) {
   const supabase = createClient();
 
-  const [loading, setLoading] = useState(true);
-  const [engineers, setEngineers] = useState<EngineerProfile[]>([]);
+  const [loading, setLoading] = useState(!initialEngineers);
+  const [engineers, setEngineers] = useState<EngineerProfile[]>(initialEngineers ?? []);
 
   const [query, setQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -48,6 +48,8 @@ export default function EngineersClient() {
   const [selectedSeniority, setSelectedSeniority] = useState<string[]>([]);
 
   useEffect(() => {
+    // Server already provided the list (crawlable); no client fetch needed.
+    if (initialEngineers) return;
     (async () => {
       setLoading(true);
 
@@ -169,7 +171,7 @@ export default function EngineersClient() {
             Engineers who create a profile and make it public will appear here.
           </p>
           <Link
-            href="/auth/signup"
+            href="/join"
             className="inline-block mt-5 rounded-lg bg-indigo-600 text-white px-5 py-2.5 text-sm font-medium hover:bg-indigo-700"
           >
             Create your profile
@@ -300,6 +302,7 @@ export default function EngineersClient() {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {filtered.map((eng) => {
                     const name = eng.full_name || eng.username || "Engineer";
+                    const initials = name.split(" ").filter(Boolean).map((n) => n[0]).join("").slice(0, 2).toUpperCase();
                     return (
                       <Link
                         key={eng.id}
@@ -307,16 +310,16 @@ export default function EngineersClient() {
                         className="block rounded-xl border border-gray-200 bg-white p-6 hover:border-indigo-300 hover:shadow-sm transition-all"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-slate-500 font-medium">
+                          <div className="h-12 w-12 shrink-0 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-slate-500 font-medium">
                             {eng.avatar_url ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img src={eng.avatar_url} alt={name} className="h-full w-full object-cover" />
                             ) : (
-                              name.charAt(0).toUpperCase()
+                              initials
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-gray-900 truncate">{name}</p>
+                            <p className="font-semibold text-gray-900 leading-snug line-clamp-2">{name}</p>
                             {eng.location && (
                               <p className="text-xs text-gray-500 truncate">{eng.location}</p>
                             )}
