@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import HireCta from "@/components/HireCta";
 
 export const metadata: Metadata = {
   title: "Hire engineers",
@@ -66,12 +67,10 @@ export default function HirePage() {
             AI. No recruiters. No agencies. No placement fees.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/employers/signup"
+            <HireCta
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors text-base"
-            >
-              Create a company account →
-            </Link>
+              loggedOutLabel="Create a company account →"
+            />
             <Link
               href="/engineers"
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl border border-gray-200 text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-colors text-base"
@@ -146,12 +145,10 @@ export default function HirePage() {
             Create a free company account and start reaching engineers today.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/employers/signup"
+            <HireCta
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-white text-indigo-700 font-semibold hover:bg-indigo-50 transition-colors"
-            >
-              Get started →
-            </Link>
+              loggedOutLabel="Get started →"
+            />
             <Link
               href="/engineers"
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl border border-indigo-400 text-white font-medium hover:bg-indigo-700 transition-colors"
