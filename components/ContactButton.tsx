@@ -105,17 +105,23 @@ export default function ContactButton({
         onClick={() => setOpen(true)}
         className="mt-5 w-full rounded-xl bg-[#1B2D4F] text-white font-semibold text-sm py-3 hover:bg-[#142240] transition-colors"
       >
-        Request contact
+        Contact
       </button>
     );
   }
 
   return (
     <div className="mt-5">
+      <label htmlFor="contact-note" className="block text-xs font-semibold text-slate-700 mb-1.5">
+        Message
+      </label>
       <textarea
+        id="contact-note"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
         rows={3}
+        autoFocus
         placeholder="Add a short note (optional) — what you're hiring for…"
         className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
       />

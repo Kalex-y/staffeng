@@ -9,13 +9,27 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [accountType, setAccountType] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const supabase = createClient();
 
+  const loadProfile = async (u: User | null) => {
+    if (!u) { setAccountType(null); setFullName(null); return; }
+    const { data: p } = await supabase
+      .from("profiles")
+      .select("account_type, full_name")
+      .eq("id", u.id)
+      .maybeSingle();
+    setAccountType(p?.account_type ?? "engineer");
+    setFullName(p?.full_name ?? null);
+  };
+
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }) => { setUser(data.user); loadProfile(data.user); });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      loadProfile(session?.user ?? null);
     });
     return () => sub.subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -24,12 +38,22 @@ export default function Navbar() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setAccountType(null);
+    setFullName(null);
     router.push("/");
     router.refresh();
   };
 
+  const isEmployer = accountType === "employer";
   const email = user?.email ?? "";
-  const initials = email ? email.slice(0, 2).toUpperCase() : "";
+  // Prefer name-based initials so the nav matches the profile card.
+  const initials = fullName
+    ? fullName.split(" ").filter(Boolean).map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : email ? email.slice(0, 2).toUpperCase() : "";
+
+  const dashHref = isEmployer ? "/employers/dashboard" : "/dashboard";
+  const messagesHref = isEmployer ? "/employers/messages" : "/inbox";
+  const messagesLabel = isEmployer ? "Messages" : "Inbox";
 
   // Full-screen auth / onboarding pages have their own branding — don't stack
   // the global nav on top of them (fixes the "two headers" issue).
@@ -39,11 +63,17 @@ export default function Navbar() {
     pathname === "/onboarding";
   if (hideChrome) return null;
 
-  const links = [
-    { href: "/engineers", label: "Browse Engineers" },
-    { href: "/jobs", label: "Jobs" },
-    { href: "/hire", label: "Hire" },
-  ];
+  const links = isEmployer
+    ? [
+        { href: "/employers/engineers", label: "Find engineers" },
+        { href: "/jobs", label: "Jobs" },
+        { href: "/employers/jobs", label: "Your roles" },
+      ]
+    : [
+        { href: "/engineers", label: "Browse Engineers" },
+        { href: "/jobs", label: "Jobs" },
+        { href: "/hire", label: "Hire" },
+      ];
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-slate-200">
@@ -66,12 +96,12 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
-              <Link href="/inbox" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Inbox</Link>
+              <Link href={messagesHref} className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">{messagesLabel}</Link>
               <Link href="/settings" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Settings</Link>
               <button onClick={handleSignOut} className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
                 Sign out
               </button>
-              <Link href="/dashboard" className="w-9 h-9 rounded-full bg-[#1B2D4F] text-white text-xs font-bold flex items-center justify-center hover:bg-[#142240] transition-colors" title="Dashboard">
+              <Link href={dashHref} className="w-9 h-9 rounded-full bg-[#1B2D4F] text-white text-xs font-bold flex items-center justify-center hover:bg-[#142240] transition-colors" title="Dashboard">
                 {initials}
               </Link>
             </>
@@ -104,8 +134,8 @@ export default function Navbar() {
           <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
             {user ? (
               <>
-                <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">Dashboard</Link>
-                <Link href="/inbox" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">Inbox</Link>
+                <Link href={dashHref} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">Dashboard</Link>
+                <Link href={messagesHref} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">{messagesLabel}</Link>
                 <Link href="/settings" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-slate-700 py-1">Settings</Link>
                 <button onClick={handleSignOut} className="text-left text-sm font-medium text-slate-500 py-1">Sign out</button>
               </>
